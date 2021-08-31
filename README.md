@@ -83,3 +83,5 @@ Na parte dos controllers, a dificuldade maior foi executar dois INSERTS um após
 Após a API estar “pronta” pensei em separar os métodos dos controllers em alguns services, seguindo a orientação SOLID, porem tive alguns erros, e como o prazo já estava bem em cima decidi não mexer. 
 Tive um pouco de dificuldade em retornar o erro da restrição de horários. Gostaria que o erro retornasse na rota e não apenas no console. 
 
+Em resumo foi um desafio legal de desenvolver. Aprendi muito com as dificuldades que tive, aprendi como funciona um ORM por trás dos panos, como os models funcionam. Valeu a pena todo aprendizado que tive. Agradeço a oportunidade.
+
