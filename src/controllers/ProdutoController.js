@@ -1,4 +1,4 @@
-const { pool } = require('../services/server');
+const { pool } = require('../database/server');
 const { format, parseISO } = require('date-fns');
 
 module.exports = {
@@ -41,9 +41,18 @@ module.exports = {
       const client = await pool.connect()
       try {
         await client.query('BEGIN')
-        const queryText = 'INSERT INTO tbProdutos(dsFoto, dsNome, vlPreco, dsCategoria, dsDescricaoPromocao, dsDiaPromocao, dtHorarioPromocaoINI, dtHorarioPromocaoFIM, vlPrecoPromocao) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING idProduto'
-        await client.query(queryText, [filename, nome, preco, categoria, nomePromocao, diaSemanaPromocao, dtHorarioINIPromocao, dtHorarioFIMPromocao, precoPromocao])
-        await client.query('COMMIT')
+        const str1 =  dtHorarioINIPromocao.split(':');
+        const str2 =  dtHorarioFIMPromocao.split(':');
+        const totalSeconds1 = parseInt(str1[0] * 60 + str1[1]);
+        const totalSeconds2 = parseInt(str2[0] * 60 + str2[1]);
+        if( totalSeconds2 - totalSeconds1 < 15 ){
+          await client.query('ROLLBACK');
+          throw new Error('Diferença de horario menor que 15m');
+        }else{
+          const queryText = 'INSERT INTO tbProdutos(dsFoto, dsNome, vlPreco, dsCategoria, dsDescricaoPromocao, dsDiaPromocao, dtHorarioPromocaoINI, dtHorarioPromocaoFIM, vlPrecoPromocao) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING idProduto'
+          await client.query(queryText, [filename, nome, preco, categoria, nomePromocao, diaSemanaPromocao, dtHorarioINIPromocao, dtHorarioFIMPromocao, precoPromocao])
+          await client.query('COMMIT')
+        }
       } catch (e) {
         await client.query('ROLLBACK')
         throw e
@@ -72,9 +81,18 @@ module.exports = {
       const client = await pool.connect()
       try {
         await client.query('BEGIN')
-        const queryText = 'UPDATE tbProdutos SET dsFoto = $1, dsNome = $2, vlPreco = $3, dsCategoria = $4, dsDescricaoPromocao = $5, dsDiaPromocao = $6, dtHorarioPromocaoINI = $7, dtHorarioPromocaoFIM = $8, vlPrecoPromocao = $9 WHERE idProduto = $10'
-        await client.query(queryText, [filename, nome, preco, categoria, nomePromocao, diaSemanaPromocao, dtHorarioINIPromocao, dtHorarioFIMPromocao, precoPromocao, id_Produto])
-        await client.query('COMMIT')
+        const str1 =  dtHorarioINIPromocao.split(':');
+        const str2 =  dtHorarioFIMPromocao.split(':');
+        const totalSeconds1 = parseInt(str1[0] * 60 + str1[1]);
+        const totalSeconds2 = parseInt(str2[0] * 60 + str2[1]);
+        if( totalSeconds2 - totalSeconds1 < 15 ){
+          await client.query('ROLLBACK');
+          throw new Error('Diferença de horario menor que 15m');
+        }else{
+          const queryText = 'UPDATE tbProdutos SET dsFoto = $1, dsNome = $2, vlPreco = $3, dsCategoria = $4, dsDescricaoPromocao = $5, dsDiaPromocao = $6, dtHorarioPromocaoINI = $7, dtHorarioPromocaoFIM = $8, vlPrecoPromocao = $9 WHERE idProduto = $10'
+          await client.query(queryText, [filename, nome, preco, categoria, nomePromocao, diaSemanaPromocao, dtHorarioINIPromocao, dtHorarioFIMPromocao, precoPromocao, id_Produto])
+          await client.query('COMMIT')
+        }
       } catch (e) {
         await client.query('ROLLBACK')
         throw e

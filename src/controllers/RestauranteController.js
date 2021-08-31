@@ -1,4 +1,4 @@
-const { pool } = require('../services/server');
+const { pool } = require('../database/server');
 const { format, parseISO } = require('date-fns');
 
 module.exports = {
@@ -37,16 +37,25 @@ module.exports = {
         const queryText = 'INSERT INTO tbRestaurantes(dsFoto, dsNome, dsEndereco) VALUES($1, $2, $3) RETURNING idRestaurante'
         const res = await client.query(queryText, [filename, nome, endereco])
         arrayHorario.map(async horario => {
-          const insertHorario = 'INSERT INTO tbhorariorestaurante(dsDiaSemana, id_Restaurante, dtHorarioINI, dtHorarioFIM) VALUES ($1, $2, $3, $4)'
-          const insertHorarioVal = [horario.dsDiaSemana, res.rows[0].idrestaurante, horario.dtHorarioINI, horario.dtHorarioFIM]
-          await client.query(insertHorario, insertHorarioVal)
-          await client.query('COMMIT')
+          const str1 =  horario.dtHorarioINI.split(':');
+          const str2 =  horario.dtHorarioFIM.split(':');
+          const totalSeconds1 = parseInt(str1[0] * 60 + str1[1]);
+          const totalSeconds2 = parseInt(str2[0] * 60 + str2[1]);
+          if( totalSeconds2 - totalSeconds1 < 15 ){
+            await client.query('ROLLBACK');
+            throw new Error('Diferença de horario menor que 15m');
+          }else{
+            const insertHorario = 'INSERT INTO tbhorariorestaurante(dsDiaSemana, id_Restaurante, dtHorarioINI, dtHorarioFIM) VALUES ($1, $2, $3, $4)'
+            const insertHorarioVal = [horario.dsDiaSemana, res.rows[0].idrestaurante, horario.dtHorarioINI, horario.dtHorarioFIM]
+            await client.query(insertHorario, insertHorarioVal)
+            await client.query('COMMIT')
+          }
         });
       } catch (e) {
         await client.query('ROLLBACK')
         throw e
       } finally {
-        client.release()
+        client.release();
         return res.status(200).send();
       }
     })().catch(e => console.error(e.stack))
@@ -68,10 +77,19 @@ module.exports = {
         const queryText2 = 'DELETE FROM tbhorariorestaurante WHERE id_Restaurante = $1'
         await client.query(queryText2, [id_Restaurante])
         arrayHorario.map(async horario => {
-          const insertHorario = 'INSERT INTO tbhorariorestaurante(dsDiaSemana, id_Restaurante, dtHorarioINI, dtHorarioFIM) VALUES ($1, $2, $3, $4)'
-          const insertHorarioVal = [horario.dsDiaSemana, id_Restaurante, horario.dtHorarioINI, horario.dtHorarioFIM]
-          await client.query(insertHorario, insertHorarioVal)
-          await client.query('COMMIT')
+          const str1 =  horario.dtHorarioINI.split(':');
+          const str2 =  horario.dtHorarioFIM.split(':');
+          const totalSeconds1 = parseInt(str1[0] * 60 + str1[1]);
+          const totalSeconds2 = parseInt(str2[0] * 60 + str2[1]);
+          if(totalSeconds2 - totalSeconds1 < 15 ){
+            await client.query('ROLLBACK');
+            throw new Error('Diferença de horario menor que 15m');
+          }else{
+            const insertHorario = 'INSERT INTO tbhorariorestaurante(dsDiaSemana, id_Restaurante, dtHorarioINI, dtHorarioFIM) VALUES ($1, $2, $3, $4)'
+            const insertHorarioVal = [horario.dsDiaSemana, id_Restaurante, horario.dtHorarioINI, horario.dtHorarioFIM]
+            await client.query(insertHorario, insertHorarioVal)
+            await client.query('COMMIT')
+          }
         });
       } catch (e) {
         await client.query('ROLLBACK')

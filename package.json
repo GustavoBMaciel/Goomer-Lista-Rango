@@ -4,8 +4,7 @@
   "description": "API RESTful capaz de gerenciar os restaurantes e os produtos do seu cardápio",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "db": "node ./src/services/server createTables",
+    "db": "node ./src/database/server createTables",
     "dev": "nodemon ./src/index.js",
     "start": "node ./src/index.js"
   },
