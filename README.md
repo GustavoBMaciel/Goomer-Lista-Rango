@@ -1,7 +1,15 @@
 # Goomer-Lista-Rango
 <center><h1> API RESTful capaz de gerenciar os restaurantes e os produtos do seu cardápio <h1></center>
+  
+## Considerações 
+Por ser a primeira API REST que fiz sem utilizar nenhum ORM, eu não sabia por onde começar. Fiquei alguns dias pesquisando e testando como fazer a conexão com o banco de dados. A primeira tentativa foi utilizando typescript, que já estou acostumado a mexer por trabalhar com ele em uma outra API, mas não tive sucesso, decidi então fazer apenas utilizando javascript e depois de muitas tentativas finalmente consegui conectar com o banco e criar a primeira tabela. Outro problema que enfrentei foi a criação das “migrations”, pelo que percebi, sem ORM não existe migrations, então deixei tudo em apenas um arquivo de criação.
+Na parte dos controllers, a dificuldade maior foi executar dois INSERTS um após o outros, pois criei uma estrutura com chave estrangeira (foi o modo mais fácil que achei). Nos controllers de criação não consegui retornar os dados cadastrados, tentei pegar pela variável de retorno, mas sempre vinha vazia. 
+Após a API estar “pronta” pensei em separar os métodos dos controllers em alguns services, seguindo a orientação SOLID, porem tive alguns erros, e como o prazo já estava bem em cima decidi não mexer. 
+Tive um pouco de dificuldade em retornar o erro da restrição de horários. Gostaria que o erro retornasse na rota e não apenas no console. 
 
-## Começando
+Em resumo foi um desafio legal de desenvolver. Aprendi muito com as dificuldades que tive, aprendi como funciona um ORM por trás dos panos, como os models funcionam. Valeu a pena todo aprendizado que tive. Agradeço a oportunidade.
+
+## Documentação
 
 > Após download do repositório, renomeie o arquivo <strong>.env.example</strong>. Nesse arquivo voce deve informar os dados de conexão com o seu banco de dados 
 > <strong>PostgreSQL</strong>. Feito isso, abra o terminal e execute o comando <strong>yarn</strong> para baixar todas as dependencias do projeto.
@@ -77,11 +85,3 @@ precoPromocao: 1.00 || null
 ### Deletar um produto especifico
 > Para deletar um produto cadastrado utilize a rota <strong>DELETE /produtos/<id_Restaurante></strong>
  
-## Considerações 
-Por ser a primeira API REST que fiz sem utilizar nenhum ORM, eu não sabia por onde começar. Fiquei alguns dias pesquisando e testando como fazer a conexão com o banco de dados. A primeira tentativa foi utilizando typescript, que já estou acostumado a mexer por trabalhar com ele em uma outra API, mas não tive sucesso, decidi então fazer apenas utilizando javascript e depois de muitas tentativas finalmente consegui conectar com o banco e criar a primeira tabela. Outro problema que enfrentei foi a criação das “migrations”, pelo que percebi, sem ORM não existe migrations, então deixei tudo em apenas um arquivo de criação.
-Na parte dos controllers, a dificuldade maior foi executar dois INSERTS um após o outros, pois criei uma estrutura com chave estrangeira (foi o modo mais fácil que achei). Nos controllers de criação não consegui retornar os dados cadastrados, tentei pegar pela variável de retorno, mas sempre vinha vazia. 
-Após a API estar “pronta” pensei em separar os métodos dos controllers em alguns services, seguindo a orientação SOLID, porem tive alguns erros, e como o prazo já estava bem em cima decidi não mexer. 
-Tive um pouco de dificuldade em retornar o erro da restrição de horários. Gostaria que o erro retornasse na rota e não apenas no console. 
-
-Em resumo foi um desafio legal de desenvolver. Aprendi muito com as dificuldades que tive, aprendi como funciona um ORM por trás dos panos, como os models funcionam. Valeu a pena todo aprendizado que tive. Agradeço a oportunidade.
-
